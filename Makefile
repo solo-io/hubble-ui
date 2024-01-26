@@ -37,7 +37,7 @@ DOCKER_BUILDER := $(shell docker buildx ls | grep -E -e "[a-zA-Z0-9-]+ \*" | cut
 builder-info: ## Print information about the docker builder that will be used for building images.
 	@echo "Using Docker Buildx builder \"$(DOCKER_BUILDER)\" with build flags \"$(DOCKER_FLAGS)\"."
 
-DOCKER_REGISTRY ?= quay.io
+# DOCKER_REGISTRY ?= quay.io
 
 # Set DOCKER_DEV_ACCOUNT with "cilium" by default
 ifeq ($(DOCKER_DEV_ACCOUNT),)
@@ -49,12 +49,13 @@ ifeq ($(DOCKER_IMAGE_TAG),)
     DOCKER_IMAGE_TAG=latest
 endif
 
-ifeq ($(findstring /,$(DOCKER_DEV_ACCOUNT)),/)
-    # DOCKER_DEV_ACCOUNT already contains '/', assume it specifies a registry
-    IMAGE_REPOSITORY := $(DOCKER_DEV_ACCOUNT)
-else
-    IMAGE_REPOSITORY := $(DOCKER_REGISTRY)/$(DOCKER_DEV_ACCOUNT)
-endif
+# ifeq ($(findstring /,$(DOCKER_DEV_ACCOUNT)),/)
+#     # DOCKER_DEV_ACCOUNT already contains '/', assume it specifies a registry
+#     IMAGE_REPOSITORY := $(DOCKER_DEV_ACCOUNT)
+# else
+#     IMAGE_REPOSITORY := $(DOCKER_REGISTRY)/$(DOCKER_DEV_ACCOUNT)
+# endif
+IMAGE_REPOSITORY := $(DOCKER_DEV_ACCOUNT)
 
 #
 # Template for Docker images. Parameters are:
@@ -68,7 +69,8 @@ define DOCKER_IMAGE_TEMPLATE
 .PHONY: $(1)
 $(1): $(3) builder-info
 	$(eval IMAGE_NAME := $(subst %,$$$$*,$(4))$(UNSTRIPPED))
-	$(QUIET)docker buildx build -f $(subst %,$$*,$(3)) \
+	$(QUIET)docker build \
+    -f $(subst %,$$*,$(3)) \
 		$(DOCKER_FLAGS) \
 		-t $(IMAGE_REPOSITORY)/$(IMAGE_NAME):$(5) $(2)
 ifeq ($(findstring --push,$(DOCKER_FLAGS)),)

@@ -11,7 +11,8 @@ import (
 )
 
 const (
-	UIServerDefaultPort = "8090"
+	// UIServerDefaultPort = "8090"
+	UIServerDefaultPort = "3434"
 )
 
 func Init() (*Config, error) {

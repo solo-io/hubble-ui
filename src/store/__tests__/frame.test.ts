@@ -1,20 +1,20 @@
 import { StoreFrame } from '~/store/frame';
-import ServiceStore from '~/store/stores/service';
-import InteractionStore from '~/store/stores/interaction';
 import ControlStore from '~/store/stores/controls';
+import InteractionStore from '~/store/stores/interaction';
+import ServiceStore from '~/store/stores/service';
 
+import { FilterDirection, FilterEntry } from '~/domain/filtering';
 import { Flow } from '~/domain/flows';
 import { Link } from '~/domain/link';
 import { ServiceCard } from '~/domain/service-map';
-import { filterFlow, FilterEntry, FilterDirection } from '~/domain/filtering';
 
 import { Filters, FiltersObject } from '~/domain/filtering';
+import { helpers as thelpers } from '~/testing';
 import {
+  filterEntries,
   flows as tflows,
   services as tsvcs,
-  filterEntries,
 } from '~/testing/data';
-import { helpers as thelpers } from '~/testing';
 
 const prepareFrame = (
   svcs: ServiceCard[],
@@ -1670,22 +1670,22 @@ describe('skip host flag', () => {
 
     const linkHtoR = thelpers
       .linkFromToService(host, regular)
-      .tcp(8090)
+      .tcp(3434)
       .forwarded();
 
     const linkHtoW = thelpers
       .linkFromToService(host, world)
-      .tcp(8090)
+      .tcp(3434)
       .forwarded();
 
     const linkHtoKDNS = thelpers
       .linkFromToService(host, kubeDNS)
-      .tcp(8090)
+      .tcp(3434)
       .forwarded();
 
     const linkHtoRN = thelpers
       .linkFromToService(host, remoteNode)
-      .tcp(8090)
+      .tcp(3434)
       .forwarded();
 
     const rhs = prepareFrame(
