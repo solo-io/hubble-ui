@@ -3,6 +3,7 @@
 .app {
   @include column;
   flex-grow: 1;
+  background: #f8fafb;
 
   position: relative;
   overflow: hidden;
