@@ -1,4 +1,10 @@
-# Deploying the Hubble UI
+# Deploying the Solo.io Hubble UI
+
+## Automated Deployment
+
+To do an automated deployment of the Solo.io Hubble UI, [create a new release](https://github.com/solo-io/hubble-ui/releases/new), and set the title and tag to the version that you want to release (e.g. `v1.2.3`). After the release is created, the [GitHub action](https://github.com/solo-io/hubble-ui/actions) should be kicked off to build and deploy the project to GCR. The new image will be tagged `gcr.io/solo-public/docs/hubble-ui-frontend:v1.2.3` and `gcr.io/solo-public/docs/hubble-ui-frontend:latest`.
+
+## Manual Deployment
 
 Modify and use the following command to build the Hubble UI frontend, and push to GCR. This assumes that the terminal is opened the repository root.
 

@@ -44,6 +44,7 @@ jobs:
         uses: google-github-actions/setup-gcloud@v0.2.1
         with:
           project_id: solo-public
+          # This is for the "github-build-gcr-pusher" service account.
           service_account_key: ${{ secrets.GC_PUBLIC_GCR_SA_KEY }}
           export_default_credentials: true
 
