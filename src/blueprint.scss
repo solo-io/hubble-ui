@@ -7,11 +7,12 @@
 // because their variables are defined with the "!default" keyword,
 // which only assigns the variable if it hasn't been assigned yet.
 
-$blue1: #c6e1f0;
-$blue2: #54b7e3;
-$blue3: #158bc2;
-$blue4: #45698a;
-$blue5: #253e58;
+// The blueprintjs variable names are described here:
+// https://blueprintjs.com/docs/#core/variables.color-aliases
+
+// It looks like the intent variable names (e.g. "pt-intent-primary")
+// show up in some of the HTML element class names as well.
+
 $pt-intent-primary: #158bc2;
 $pt-intent-success: #0dc98e;
 $pt-intent-warning: #ffb831;
