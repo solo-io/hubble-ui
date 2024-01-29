@@ -5,7 +5,7 @@
     "test": "jest",
     "prepare": "husky install",
     "postinstall": "patch-package && bash ./scripts/post-install.sh",
-    "watch:server": "servor ./server/public index.html 1234",
+    "watch:server": "servor ./server/public index.html 8080",
     "watch:client": "NODE_ENV=development webpack-dev-server --progress",
     "watch": "run-p watch:*",
     "build": "NODE_ENV=production webpack",
