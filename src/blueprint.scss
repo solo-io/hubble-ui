@@ -1,3 +1,24 @@
+// ------------------------- //
+// ---- SOLO IO SECTION ---- //
+// ------------------------- //
+
+// We can assign variables that blueprintjs uses here.
+// Then the subsequent blueprintjs imports will use these values,
+// because their variables are defined with the "!default" keyword,
+// which only assigns the variable if it hasn't been assigned yet.
+
+// The blueprintjs variable names are described here:
+// https://blueprintjs.com/docs/#core/variables.color-aliases
+
+// It looks like the intent variable names (e.g. "pt-intent-primary")
+// show up in some of the HTML element class names as well.
+
+$pt-intent-primary: #158bc2;
+$pt-intent-success: #0dc98e;
+$pt-intent-warning: #ffb831;
+$pt-intent-danger: #d75b1d;
+$black: #253e58;
+
 @import '~@blueprintjs/core/lib/scss/variables';
 
 // $pt-button-height: 26px;

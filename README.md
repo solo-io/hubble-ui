@@ -1,3 +1,11 @@
+<h1 align="center">Hubble UI - Solo.io Fork</h1>
+
+<p align="center">
+  The Solo.io fork of Hubble UI is themed and customized to work with our products. For more documentation, see `./solo-resources/README.md`. For the original Hubble UI readme, see below.
+</p>
+
+---
+
 <h1 align="center">Hubble UI</h1>
 <p align="center">
   Hubble UI is an open-source user interface for <a href="https://github.com/cilium/hubble">Cilium Hubble</a>.
