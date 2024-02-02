@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: solo-hubble-ui-frontend
+  namespace: apps
+spec:
+  selector:
+    matchLabels:
+      app: solo-hubble-ui-frontend
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: solo-hubble-ui-frontend
+    spec:
+      containers:
+        - name: solo-hubble-ui-frontend
+          image: ${FRONTEND_IMAGE_NAME}:${RELEASE_TAG}
+          ports:
+            - containerPort: 8080
+          resources:
+            limits:
+              memory: '128Mi'
+              cpu: '500m'
