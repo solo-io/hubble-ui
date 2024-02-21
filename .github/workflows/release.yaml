@@ -1,0 +1,64 @@
+name: Release Workflow
+
+on:
+  release:
+    types:
+      - created
+
+jobs:
+  branchAndPublishToDocker:
+    runs-on: ubuntu-20.04
+
+    env:
+      RELEASE_TAG: ${{ github.event.release.tag_name }}
+      GIT_USER_NAME: soloio-bot
+      GIT_USER_EMAIL: soloio-bot@github.com
+      GH_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+      NODE_VERSION: '18.16.0'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Setup Git
+        run: |
+          git config user.name $GIT_USER_NAME
+          git config user.email $GIT_USER_EMAIL
+          git config --global url."https://${GH_TOKEN}@github.com/solo-io/".insteadOf "https://github.com/solo-io/"
+          git config --global pull.rebase false
+          git fetch --prune
+      - name: Create/update release branch
+        run: |
+          RELEASE_BRANCH=$(echo $RELEASE_TAG | sed 's|\.[0-9]*$|\.x|g')
+          # Check if the release branch exists.
+          if [ $(git ls-remote origin --heads $RELEASE_BRANCH | wc -l) -eq 0 ]; then
+            # If it doesn't exist, we can create it and push to it.
+            echo "Branch $RELEASE_BRANCH does not exist, so it will be created."
+            git checkout -b $RELEASE_BRANCH
+            git push --set-upstream origin $RELEASE_BRANCH 
+          else
+            # Else, we need to update it.
+            echo "Branch $RELEASE_BRANCH exists, so it will be updated."
+            git checkout $RELEASE_BRANCH
+            git pull origin master -X theirs --allow-unrelated-histories
+            git push origin $RELEASE_BRANCH 
+          fi
+      #
+      # GCR Image
+      #
+      - name: Set up Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v0.2.1
+        with:
+          project_id: solo-public
+          # This is for the "github-build-gcr-pusher" service account.
+          service_account_key: ${{ secrets.GC_PUBLIC_GCR_SA_KEY }}
+          export_default_credentials: true
+
+      - name: Configure Docker to use GCR
+        run: |
+          gcloud auth configure-docker --quiet
+      - name: Build and push Docker image
+        run: |
+          DOCKER_BUILDKIT=1 docker build -f ./solo-resources/docker/Dockerfile --tag gcr.io/solo-public/docs/solo-hubble-ui-frontend:${RELEASE_TAG} --tag gcr.io/solo-public/docs/solo-hubble-ui-frontend:latest . 
+          docker push gcr.io/solo-public/docs/solo-hubble-ui-frontend:${RELEASE_TAG}
+          docker push gcr.io/solo-public/docs/solo-hubble-ui-frontend:latest

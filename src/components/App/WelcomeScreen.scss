@@ -34,6 +34,10 @@
 .namespacesList,
 .spinnerWrapper {
   margin: 20px 0 0;
+
+  path[class='bp5-spinner-head'] {
+    stroke: #158bc2 !important;
+  }
 }
 
 .namespacesList {
