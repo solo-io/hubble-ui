@@ -24,6 +24,7 @@ type PropGetters struct {
 	ClientPollDelays         []time.Duration
 	E2ETestModeEnabled       EnvVarGetter[bool]
 	E2ELogfilesBasepath      EnvVarGetter[string]
+	RedisAddress             EnvVarGetter[string]
 }
 
 type EnvVarGetter[T any] func() EnvVarResult[T]

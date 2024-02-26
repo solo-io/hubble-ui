@@ -10,6 +10,7 @@ import (
 
 	"github.com/cilium/hubble-ui/backend/internal/ns_watcher/common"
 	"github.com/cilium/hubble-ui/backend/internal/ns_watcher/k8s"
+	"github.com/cilium/hubble-ui/backend/soloio/storage/remote"
 )
 
 const (
@@ -19,7 +20,8 @@ const (
 type NSEvent = common.NSEvent
 
 type NSWatcherOptions struct {
-	Log logrus.FieldLogger
+	Log            logrus.FieldLogger
+	SnapshotReader remote.Reader
 }
 
 type NSWatcherInterface interface {

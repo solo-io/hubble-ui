@@ -21,8 +21,12 @@ func (srv *APIServer) ControlStream(
 ) error {
 	log, ctx := rctx.Log, ch.Context()
 
+	// nsWatcher, err := srv.clients.NSWatcher(ctx, ns_watcher.NSWatcherOptions{
+	// 	Log: log.WithField("component", "ControlStream.NSWatcher"),
+	// })
 	nsWatcher, err := srv.clients.NSWatcher(ctx, ns_watcher.NSWatcherOptions{
-		Log: log.WithField("component", "ControlStream.NSWatcher"),
+		Log:            log.WithField("component", "ControlStream.NSWatcher"),
+		SnapshotReader: srv.clients.SnapshotReader(),
 	})
 	if err != nil {
 		return err

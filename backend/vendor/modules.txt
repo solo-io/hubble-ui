@@ -4,6 +4,9 @@ github.com/armon/go-metrics
 # github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2
 ## explicit; go 1.13
 github.com/asaskevich/govalidator
+# github.com/avast/retry-go v2.2.0+incompatible
+## explicit
+github.com/avast/retry-go
 # github.com/beorn7/perks v1.0.1
 ## explicit; go 1.11
 github.com/beorn7/perks/quantile
@@ -534,6 +537,10 @@ github.com/shirou/gopsutil/v3/mem
 ## explicit; go 1.13
 github.com/sirupsen/logrus
 github.com/sirupsen/logrus/hooks/syslog
+# github.com/solo-io/go-utils v0.21.4
+## explicit; go 1.13
+github.com/solo-io/go-utils/clicore/constants
+github.com/solo-io/go-utils/contextutils
 # github.com/solo-io/protoc-gen-ext v0.0.18
 ## explicit; go 1.13
 github.com/solo-io/protoc-gen-ext/extproto

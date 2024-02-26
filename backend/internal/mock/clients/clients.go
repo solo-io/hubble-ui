@@ -11,6 +11,7 @@ import (
 	"github.com/cilium/hubble-ui/backend/internal/mock/streams"
 	"github.com/cilium/hubble-ui/backend/internal/ns_watcher"
 	"github.com/cilium/hubble-ui/backend/internal/relay_client"
+	"github.com/cilium/hubble-ui/backend/soloio/storage/remote"
 
 	"github.com/cilium/hubble-ui/backend/pkg/rate_limiter"
 )
@@ -120,4 +121,8 @@ func (cl *Clients) duplicateSource() sources.MockedSource {
 	}
 
 	return cl.src.Duplicate()
+}
+
+func (cl *Clients) SnapshotReader() remote.Reader {
+	return nil
 }
