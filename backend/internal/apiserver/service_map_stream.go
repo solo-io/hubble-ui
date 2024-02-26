@@ -19,9 +19,6 @@ import (
 	"github.com/cilium/hubble-ui/backend/internal/apiserver/req_context"
 	cp "github.com/cilium/hubble-ui/backend/internal/customprotocol"
 	"github.com/cilium/hubble-ui/backend/internal/flow_stream"
-	"github.com/cilium/hubble-ui/backend/internal/hubble_client"
-	"github.com/cilium/hubble-ui/backend/internal/msg"
-	"github.com/cilium/hubble-ui/backend/internal/statuschecker"
 )
 
 func (srv *APIServer) ServiceMapStream(
@@ -46,7 +43,7 @@ func (srv *APIServer) ServiceMapStream(
 		return ch.TerminateStatus(http.StatusBadRequest)
 	}
 
-	relayClient := srv.clients.RelayClient()
+	hubbleClient := srv.clients.HubbleClient()
 
 	eventsRequested := api_helpers.GetFlagsWhichEventsRequested(req.GetEventTypes())
 	dcache := cache.New()
@@ -59,7 +56,7 @@ func (srv *APIServer) ServiceMapStream(
 
 	var flowStream flow_stream.FlowStreamInterface
 	if eventsRequested.FlowsRequired() {
-		flowStream = relayClient.FlowStream()
+		flowStream = hubbleClient.FlowStream()
 
 		go flowStream.Run(ctx, flow_stream.ExtractFlowsRequest(req))
 		defer flowStream.Stop()
@@ -67,22 +64,22 @@ func (srv *APIServer) ServiceMapStream(
 		flowStream = flow_stream.NewDumb()
 	}
 
-	var statusChecker statuschecker.ServerStatusCheckerInterface
-	statusChecker = statuschecker.NewDumb()
-	if eventsRequested.Status {
-		statusChecker, err = relayClient.ServerStatusChecker(hubble_client.StatusCheckerOptions{
-			Delay: 5 * time.Second,
-			Log:   log,
-		})
+	// var statusChecker statuschecker.ServerStatusCheckerInterface
+	// statusChecker = statuschecker.NewDumb()
+	// if eventsRequested.Status {
+	// 	statusChecker, err = relayClient.ServerStatusChecker(hubble_client.StatusCheckerOptions{
+	// 		Delay: 5 * time.Second,
+	// 		Log:   log,
+	// 	})
 
-		if err != nil {
-			log.Errorf(msg.HubbleStatusCriticalError, err)
-			return err
-		}
+	// 	if err != nil {
+	// 		log.Errorf(msg.HubbleStatusCriticalError, err)
+	// 		return err
+	// 	}
 
-		go statusChecker.Run(ctx)
-		defer statusChecker.Stop()
-	}
+	// 	go statusChecker.Run(ctx)
+	// 	defer statusChecker.Stop()
+	// }
 
 	flushFlows := func() error {
 		// NOTE: take links and services from flow
@@ -125,18 +122,18 @@ F:
 			}
 		case <-flowStream.Stopped():
 			return errors.New("FlowStream has been stopped")
-		case err := <-statusChecker.Errors():
-			if !grpc_errors.IsRecoverable(err) {
-				log.
-					WithError(err).
-					Error("hubble status checker: unrecoverable error")
+		// case err := <-statusChecker.Errors():
+		// 	if !grpc_errors.IsRecoverable(err) {
+		// 		log.
+		// 			WithError(err).
+		// 			Error("hubble status checker: unrecoverable error")
 
-				return err
-			}
+		// 		return err
+		// 	}
 
-			log.
-				WithError(err).
-				Error("hubble status checker: failed to connect to hubble-relay")
+		// 	log.
+		// 		WithError(err).
+		// 		Error("hubble status checker: failed to connect to hubble-relay")
 		case <-flows.Ticker():
 			if err := flushFlows(); err != nil {
 				return err
@@ -152,13 +149,13 @@ F:
 			}
 
 			flows.Push(pbFlow)
-		case fullStatus := <-statusChecker.Statuses():
-			statusEvent := api_helpers.EventResponseFromServerStatus(fullStatus)
+			// case fullStatus := <-statusChecker.Statuses():
+			// 	statusEvent := api_helpers.EventResponseFromServerStatus(fullStatus)
 
-			if err := ch.SendProto(statusEvent); err != nil {
-				log.WithError(err).Error("failed to send hubble status update")
-				return err
-			}
+			// 	if err := ch.SendProto(statusEvent); err != nil {
+			// 		log.WithError(err).Error("failed to send hubble status update")
+			// 		return err
+			// 	}
 		}
 	}
 

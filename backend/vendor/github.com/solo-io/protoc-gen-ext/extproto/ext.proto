@@ -1,0 +1,44 @@
+syntax = "proto2";
+package extproto;
+
+option go_package = "github.com/solo-io/protoc-gen-ext/extproto";
+
+import "google/protobuf/descriptor.proto";
+
+// Validation rules applied at the message level
+extend google.protobuf.FileOptions {
+    // Disabled nullifies any validation rules for this message, including any
+    // message fields associated with it that do support validation.
+    optional bool hash_all = 10071;
+
+
+    // enabling equal_all for a file will generate a Equal(m) method for all Messages in the file.
+    // Equal(m) will do a deep equal on the caller, and incoming object.
+    optional bool equal_all = 10072;
+
+    // enabling merge_all for a file will generate a Merge(m) method for all Messages in the file.
+    optional bool merge_all = 10073;
+
+    // enabling clone_all for a file will generate a Clone(m) method for all Messages in the file.
+    // Clone(m) will deep copy the message.
+    optional bool clone_all = 10074;
+}
+
+// Validation rules applied at the field level
+extend google.protobuf.FieldOptions {
+    // Rules specify the validations to be performed on this field. By default,
+    // no validation is performed against a field.
+    optional bool skip_hashing = 10071;
+
+    // This field will not be merged when a message's Merge() method is called.
+    optional bool skip_merging = 10072;
+
+    // This field will not be merged when a message's Merge() method is called.
+    optional bool sensitive = 10073;
+}
+
+// Validation rules applied at the field level
+extend google.protobuf.OneofOptions {
+    // The fields in this oneof will not be merged when a message's Merge() method is called.
+    optional bool skip_merging_oneof = 10072;
+}

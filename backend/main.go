@@ -28,8 +28,8 @@ func main() {
 		TLSToRelayClientKeyFile:  config.StrOr("TLS_RELAY_CLIENT_KEY_FILE", ""),
 		E2ETestModeEnabled:       config.BoolOr("E2E_TEST_MODE", false),
 		E2ELogfilesBasepath:      config.StrOr("E2E_LOGFILES_BASEPATH", ""),
+		RedisAddress:             config.StrOr("REDIS_ADDRESS", "gloo-mesh-redis.gloo-mesh:6379"),
 	}).Build()
-
 	if err != nil {
 		log.WithError(err).Error("failed to initialize application config")
 		os.Exit(1)
@@ -39,7 +39,6 @@ func main() {
 		ApiRoute:         "/api",
 		HealthCheckRoute: "/healthz",
 	})
-
 	if err != nil {
 		log.WithError(err).Error("failed to initialize application")
 		os.Exit(1)

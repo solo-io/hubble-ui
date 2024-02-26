@@ -46,6 +46,8 @@ type Config struct {
 	TLSRelayClientCertFile string
 	TLSRelayClientKeyFile  string
 
+	RedisAddress string
+
 	relayClientConfig certloader.ClientConfigBuilder
 }
 

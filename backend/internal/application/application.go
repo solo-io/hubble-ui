@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"os/signal"
-	"time"
 
 	gops "github.com/google/gops/agent"
 	"github.com/sirupsen/logrus"
@@ -63,11 +62,11 @@ func (app *Application) Run() error {
 
 	} else {
 		// FIXME: make the dial timeout configurable
-		dialCtx, cancelDial := context.WithTimeout(ctx, 10*time.Second)
-		defer cancelDial()
+		// dialCtx, cancelDial := context.WithTimeout(ctx, 10*time.Second)
+		// defer cancelDial()
 
 		prodClients, err := api_clients.New(
-			dialCtx,
+			ctx,
 			app.cfg,
 			app.log.WithField("component", "APIClients"),
 		)

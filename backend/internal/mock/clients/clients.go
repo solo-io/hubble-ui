@@ -7,10 +7,12 @@ import (
 	"github.com/sirupsen/logrus"
 
 	"github.com/cilium/hubble-ui/backend/internal/api_clients"
+	"github.com/cilium/hubble-ui/backend/internal/hubble_client"
 	"github.com/cilium/hubble-ui/backend/internal/mock/sources"
 	"github.com/cilium/hubble-ui/backend/internal/mock/streams"
 	"github.com/cilium/hubble-ui/backend/internal/ns_watcher"
 	"github.com/cilium/hubble-ui/backend/internal/relay_client"
+	"github.com/cilium/hubble-ui/backend/soloio/storage/remote"
 
 	"github.com/cilium/hubble-ui/backend/pkg/rate_limiter"
 )
@@ -103,6 +105,10 @@ func (cl *Clients) RelayClient() relay_client.RelayClientInterface {
 	return rcl
 }
 
+func (cl *Clients) HubbleClient() hubble_client.HubbleClientInterface {
+	return nil
+}
+
 func (cl *Clients) NSWatcher(ctx context.Context, opts ns_watcher.NSWatcherOptions) (ns_watcher.NSWatcherInterface, error) {
 	cl.mx.Lock()
 	defer cl.mx.Unlock()
@@ -120,4 +126,8 @@ func (cl *Clients) duplicateSource() sources.MockedSource {
 	}
 
 	return cl.src.Duplicate()
+}
+
+func (cl *Clients) SnapshotReader() remote.Reader {
+	return nil
 }
