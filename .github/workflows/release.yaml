@@ -49,7 +49,7 @@ jobs:
       - name: Set up Google Cloud SDK
         uses: google-github-actions/setup-gcloud@v0.2.1
         with:
-          project_id: solo-public
+          project_id: developers-369321
           # This is for the "github-actions" service account.
           service_account_key: ${{ secrets.GC_SOLO_ENG_GHA_SA_JSON_KEY }}
           export_default_credentials: true
