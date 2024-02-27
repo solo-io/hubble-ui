@@ -7,6 +7,7 @@ import (
 	"github.com/sirupsen/logrus"
 
 	"github.com/cilium/hubble-ui/backend/internal/api_clients"
+	"github.com/cilium/hubble-ui/backend/internal/hubble_client"
 	"github.com/cilium/hubble-ui/backend/internal/mock/sources"
 	"github.com/cilium/hubble-ui/backend/internal/mock/streams"
 	"github.com/cilium/hubble-ui/backend/internal/ns_watcher"
@@ -102,6 +103,10 @@ func (cl *Clients) RelayClient() relay_client.RelayClientInterface {
 
 	cl.relayClients = append(cl.relayClients, rcl)
 	return rcl
+}
+
+func (cl *Clients) HubbleClient() hubble_client.HubbleClientInterface {
+	return nil
 }
 
 func (cl *Clients) NSWatcher(ctx context.Context, opts ns_watcher.NSWatcherOptions) (ns_watcher.NSWatcherInterface, error) {

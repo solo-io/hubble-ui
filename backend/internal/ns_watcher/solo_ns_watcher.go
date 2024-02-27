@@ -6,10 +6,10 @@ import (
 
 	"github.com/solo-io/skv2/pkg/ezkube"
 	v1 "k8s.io/api/core/v1"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
+	"github.com/cilium/hubble-ui/backend/domain/events"
 	"github.com/cilium/hubble-ui/backend/internal/ns_watcher/common"
 	"github.com/cilium/hubble-ui/backend/soloio/storage/remote"
 )
@@ -94,31 +94,26 @@ func (w *Watcher) runNSWatcher(ctx context.Context) {
 			return GVK == nsGvk
 		})
 
-		nsSet := make(map[string]struct{})
+		nsSet := make(map[string]*v1.Namespace)
 
 		for cluster := range snap {
 			dsnap := delta.Snapshots()[cluster]
 			if dsnap != nil {
-				for k := range dsnap.GetUpdated()[nsGvk] {
-					nsSet[k.Name] = struct{}{}
+				for k, obj := range dsnap.GetUpdated()[nsGvk] {
+					nsSet[k.Name] = obj.(*v1.Namespace)
 				}
 			} else {
 				snap.ForEachObject(func(snapCluster string, gvk schema.GroupVersionKind, obj client.Object) {
 					if ns, ok := obj.(*v1.Namespace); ok && cluster == snapCluster {
-						nsSet[ns.Name] = struct{}{}
+						nsSet[ns.Name] = ns
 					}
 				})
 			}
 		}
 
-		for ns := range nsSet {
-			w.events <- &common.NSEvent{
-				K8sNamespace: &v1.Namespace{
-					ObjectMeta: metav1.ObjectMeta{
-						Name: ns,
-					},
-				},
-			}
+		for _, ns := range nsSet {
+			// FIXME(HACK): support ns deletion
+			w.events <- common.EventFromNSObject(events.Added, ns)
 		}
 	}
 }

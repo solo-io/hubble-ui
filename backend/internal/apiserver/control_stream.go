@@ -4,15 +4,12 @@ import (
 	"time"
 
 	"github.com/cilium/hubble-ui/backend/internal/api_helpers"
-	"github.com/cilium/hubble-ui/backend/internal/apiserver/notifications"
 	"github.com/cilium/hubble-ui/backend/internal/apiserver/req_context"
 	cp "github.com/cilium/hubble-ui/backend/internal/customprotocol"
 	"github.com/cilium/hubble-ui/backend/internal/data_stash"
-	"github.com/cilium/hubble-ui/backend/internal/hubble_client"
 	"github.com/cilium/hubble-ui/backend/internal/ns_watcher"
 	"github.com/cilium/hubble-ui/backend/internal/statuschecker"
 	"github.com/cilium/hubble-ui/backend/pkg/debounce"
-	dchannel "github.com/cilium/hubble-ui/backend/pkg/dynamic_channel"
 	"github.com/cilium/hubble-ui/backend/proto/ui"
 )
 
@@ -32,26 +29,26 @@ func (srv *APIServer) ControlStream(
 		return err
 	}
 
-	notifs := notifications.NewNotificationsState()
-	isRelayColdStart := true
+	// notifs := notifications.NewNotificationsState()
+	// isRelayColdStart := true
 
-	relayClient := srv.clients.RelayClient()
-	connSub := relayClient.ConnStatusChannel()
-	defer connSub.Drop()
+	// relayClient := srv.clients.RelayClient()
+	// connSub := relayClient.ConnStatusChannel()
+	// defer connSub.Drop()
 
-	relayConnChannel, channelReader := dchannel.AsOutputChannel(connSub.Datum)
-	go channelReader(ctx)
+	// relayConnChannel, channelReader := dchannel.AsOutputChannel(connSub.Datum)
+	// go channelReader(ctx)
 
-	statusChecker, err := relayClient.ServerStatusChecker(hubble_client.StatusCheckerOptions{
-		Delay: 5 * time.Second,
-		Log:   log,
-	})
-	if err != nil {
-		return err
-	}
+	// statusChecker, err := relayClient.ServerStatusChecker(hubble_client.StatusCheckerOptions{
+	// 	Delay: 5 * time.Second,
+	// 	Log:   log,
+	// })
+	// if err != nil {
+	// 	return err
+	// }
 
-	go statusChecker.Run(ctx)
-	defer statusChecker.Stop()
+	// go statusChecker.Run(ctx)
+	// defer statusChecker.Stop()
 
 	go nsWatcher.Run(ctx)
 	defer nsWatcher.Stop()
@@ -72,7 +69,7 @@ F:
 			break F
 		case evt := <-nsWatcher.NSEvents():
 			dataStash.PushNamespaceEvent(evt)
-			log.Debug("pushing ns event")
+			log.Debugf("pushing ns event for %s", evt.K8sNamespace.Name)
 			nsDebounce.Touch()
 		case <-nsDebounce.Triggered():
 			nss := dataStash.FlushNamespaces()
@@ -92,55 +89,55 @@ F:
 		case err := <-nsWatcher.Errors():
 			log.WithError(err).Error("ns watcher failed")
 			return err
-		case fullStatus := <-statusChecker.Statuses():
-			evt := serverStatusResponse(fullStatus)
+			// case fullStatus := <-statusChecker.Statuses():
+			// 	evt := serverStatusResponse(fullStatus)
 
-			if err := ch.SendProto(evt); err != nil {
-				log.Errorf("failed to send server status notification: %v\n", err)
-				return err
-			}
-		case err := <-statusChecker.Errors():
-			log.Errorf("status checker error: %v\n", err)
-			return err
-		case st := <-relayConnChannel:
-			switch {
-			case st.IsConnected():
-				isRelayColdStart = false
-				evt := notifs.ConnectedToRelay()
-				if evt == nil {
-					break
-				}
+			// 	if err := ch.SendProto(evt); err != nil {
+			// 		log.Errorf("failed to send server status notification: %v\n", err)
+			// 		return err
+			// 	}
+			// case err := <-statusChecker.Errors():
+			// 	log.Errorf("status checker error: %v\n", err)
+			// 	return err
+			// case st := <-relayConnChannel:
+			// 	switch {
+			// 	case st.IsConnected():
+			// 		isRelayColdStart = false
+			// 		evt := notifs.ConnectedToRelay()
+			// 		if evt == nil {
+			// 			break
+			// 		}
 
-				if err := ch.SendProto(evt.AsControlResponse()); err != nil {
-					log.
-						WithField("state", "ConnectedToRelay").
-						WithError(err).
-						Error("failed to send relay state change notification")
+			// 		if err := ch.SendProto(evt.AsControlResponse()); err != nil {
+			// 			log.
+			// 				WithField("state", "ConnectedToRelay").
+			// 				WithError(err).
+			// 				Error("failed to send relay state change notification")
 
-					return err
-				}
+			// 			return err
+			// 		}
 
-			case st.IsConnecting():
-				if isRelayColdStart {
-					break
-				}
+			// 	case st.IsConnecting():
+			// 		if isRelayColdStart {
+			// 			break
+			// 		}
 
-				evt := notifs.ReconnectingToRelay()
-				if evt == nil {
-					break
-				}
+			// 		evt := notifs.ReconnectingToRelay()
+			// 		if evt == nil {
+			// 			break
+			// 		}
 
-				// NOTE: We are here if someone is reconnecting to hubble-relay
-				if err := ch.SendProto(evt.AsControlResponse()); err != nil {
-					log.
-						WithField("state", "ReconnectingToRelay").
-						WithError(err).
-						Error("failed to send relay state change notification")
+			// 		// NOTE: We are here if someone is reconnecting to hubble-relay
+			// 		if err := ch.SendProto(evt.AsControlResponse()); err != nil {
+			// 			log.
+			// 				WithField("state", "ReconnectingToRelay").
+			// 				WithError(err).
+			// 				Error("failed to send relay state change notification")
 
-					return err
-				}
+			// 			return err
+			// 		}
 
-			}
+			// 	}
 		}
 	}
 

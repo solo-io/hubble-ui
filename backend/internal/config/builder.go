@@ -42,6 +42,10 @@ func (b *ConfigBuilder) Build() (*Config, error) {
 		return nil, err
 	}
 
+	if err := b.initRedis(cfg); err != nil {
+		return nil, err
+	}
+
 	return cfg, nil
 }
 
@@ -164,7 +168,6 @@ func (b ConfigBuilder) initTLSToRelay(cfg *Config) error {
 		cfg.TLSRelayClientCertFile,
 		cfg.TLSRelayClientKeyFile,
 	)
-
 	if err != nil {
 		return err
 	}
@@ -224,6 +227,18 @@ func (b *ConfigBuilder) initTestModeFlags(cfg *Config) error {
 
 	cfg.E2ETestMode = e2eMode.Value
 	cfg.E2ELogFilesBasePath = logFiles.Value
+
+	return nil
+}
+
+func (b *ConfigBuilder) initRedis(cfg *Config) error {
+	addr := b.props.RedisAddress()
+	if err := addr.Err(); err != nil {
+		return err
+	}
+
+	addr.LogIfFallback(b.logger)
+	cfg.RedisAddress = addr.Value
 
 	return nil
 }

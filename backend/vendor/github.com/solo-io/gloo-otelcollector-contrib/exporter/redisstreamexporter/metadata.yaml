@@ -1,0 +1,6 @@
+type: redisstream
+status:
+  class: exporter
+  stability:
+    development: [logs]
+
