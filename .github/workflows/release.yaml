@@ -59,6 +59,6 @@ jobs:
           gcloud auth configure-docker us-docker.pkg.dev --quiet
       - name: Build and push Docker image
         run: |
-          DOCKER_BUILDKIT=1 docker build -f ./solo-resources/docker/Dockerfile --tag us-docker.pkg.dev/developers-369321/gloo-platform-dev/solo-hubble-ui-frontend:${RELEASE_TAG} --tag us-docker.pkg.dev/developers-369321/gloo-platform-dev/solo-hubble-ui-frontend:latest . 
-          docker push us-docker.pkg.dev/developers-369321/gloo-platform-dev/solo-hubble-ui-frontend:${RELEASE_TAG}
-          docker push us-docker.pkg.dev/developers-369321/gloo-platform-dev/solo-hubble-ui-frontend:latest
+          DOCKER_BUILDKIT=1 docker build -f ./solo-resources/docker/Dockerfile --tag us-docker.pkg.dev/developers-369321/gloo-platform-dev/hubble-ui:${RELEASE_TAG} --tag us-docker.pkg.dev/developers-369321/gloo-platform-dev/hubble-ui:latest . 
+          docker push us-docker.pkg.dev/developers-369321/gloo-platform-dev/hubble-ui:${RELEASE_TAG}
+          docker push us-docker.pkg.dev/developers-369321/gloo-platform-dev/hubble-ui:latest

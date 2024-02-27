@@ -2,7 +2,7 @@
 
 ## Automated Method
 
-To publish an image of the Solo.io Hubble UI, [create a new release](https://github.com/solo-io/solo-hubble-ui/releases/new), and set both the release title and release tag to the version that you want to release (e.g. `v1.2.3`). After the release is created, the [GitHub action](https://github.com/solo-io/solo-hubble-ui/actions) should be automatically kicked off to build the image and push the image to GCR. The new image will be tagged `us-docker.pkg.dev/developers-369321/gloo-platform-dev/solo-hubble-ui-frontend:v1.2.3` and `us-docker.pkg.dev/developers-369321/gloo-platform-dev/solo-hubble-ui-frontend:latest`.
+To publish an image of the Solo.io Hubble UI, [create a new release](https://github.com/solo-io/solo-hubble-ui/releases/new), and set both the release title and release tag to the version that you want to release (e.g. `v1.2.3`). After the release is created, the [GitHub action](https://github.com/solo-io/solo-hubble-ui/actions) should be automatically kicked off to build the image and push the image to GCR. The new image will be tagged `us-docker.pkg.dev/developers-369321/gloo-platform-dev/hubble-ui:v1.2.3` and `us-docker.pkg.dev/developers-369321/gloo-platform-dev/hubble-ui:latest`.
 
 ## Manual Method
 
@@ -10,7 +10,7 @@ Modify and use the following command to build the Hubble UI frontend, and push t
 
 ```sh
 export RELEASE_TAG=v0.0.1
-export FRONTEND_IMAGE_NAME=us-docker.pkg.dev/developers-369321/gloo-platform-dev/solo-hubble-ui-frontend
+export FRONTEND_IMAGE_NAME=us-docker.pkg.dev/developers-369321/gloo-platform-dev/hubble-ui
 docker build -f ./solo-resources/docker/Dockerfile -t "${FRONTEND_IMAGE_NAME}:latest" -t "${FRONTEND_IMAGE_NAME}:${RELEASE_TAG}" . && \
 docker push "${FRONTEND_IMAGE_NAME}:latest" && \
 docker push "${FRONTEND_IMAGE_NAME}:${RELEASE_TAG}"
